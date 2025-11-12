@@ -1,0 +1,114 @@
+NAME:
+MATRIC NUMBER:
+DEPARTMENT:
+COMPUTER SCIENCE
+COURSE:
+CSC 392
+
+SOFTWARE PROJECT
+
+Project Title: NAMA Passenger Feedback Application
+
+Project Description:
+The NAMA Passenger Feedback application enables airport passengers to rate services (Cleanliness, Staff, Security) using simple star ratings and leave optional comments. Submissions are stored in a MySQL database. The application includes a protected Admin Dashboard where authorized users can log in to view analytics, filter by date, visualize ratings and daily trends using charts, search recent comments, and export data to CSV. Admins can also be created and managed (restricted to a super admin role), and existing admins can change their passwords. The project runs on PHP, MySQL (PDO), Bootstrap 5, Chart.js, and vanilla JavaScript.
+
+Live Link:
+Provide if hosted (e.g., https://yourdomain.com/feedback). Otherwise, use the local setup below.
+
+Configuration:
+Before running the project, complete these configuration steps:
+1. Database
+   - Create a MySQL database named `feedback_app`.
+   - Import the schema from `manual_setup.sql` to create required tables:
+     - `feedback` (ratings, comment, timestamp, optional name/email/phone)
+     - `admins` (username, password_hash, role, optional profile fields)
+2. Application Settings
+   - Edit `db_config.php` with your database credentials:
+     - `host`, `dbname`, `username`, `password`
+   - Optional flag in `config.php`:
+     - `ALLOW_ADMIN_SIGNUP` (true to allow registering admins via the UI; set false later for production)
+
+Installation:
+
+Local (XAMPP on Windows)
+1. Copy and extract source code:
+   - Place the project under `C:\xampp\htdocs\feedback-app`.
+2. Start services:
+   - Open XAMPP Control Panel and start `Apache` and `MySQL`.
+3. Create the database:
+   - Visit `http://localhost/phpmyadmin/`, create `feedback_app`, and import `manual_setup.sql`.
+4. Configure credentials:
+   - Edit `db_config.php` with your local MySQL credentials (default: `username=root`, `password=''`).
+5. Run the application:
+   - Open `http://localhost/feedback-app/index.php` in your browser (feedback form).
+   - Admin login: `http://localhost/feedback-app/admin_login.php`.
+
+Online (cPanel)
+1. Upload files:
+   - In cPanel → File Manager, upload the project to `public_html` or a subfolder (e.g., `public_html/feedback`).
+2. Create database and user:
+   - In cPanel → MySQL® Databases, create a DB (e.g., `yourname_feedback_app`) and a DB user.
+   - Add the user to the DB with ALL PRIVILEGES.
+3. Configure credentials:
+   - Edit `db_config.php` with your cPanel MySQL host, DB name, user, and password.
+4. Import schema:
+   - In cPanel → phpMyAdmin, select your DB and import `manual_setup.sql`.
+5. Run the application:
+   - Navigate to your domain (e.g., `https://yourdomain.com/feedback/index.php`).
+   - Admin login: `https://yourdomain.com/feedback/admin_login.php`.
+
+Functionalities in the project:
+1. Users can register and sign in:
+   - Admins authenticate via `admin_login.php` with secure password hashing.
+   - Admin sign-up via `admin_signup.php` (enabled when `ALLOW_ADMIN_SIGNUP` is true); the first admin becomes `super`.
+2. View the home page:
+   - `index.php` serves as the main entry point and feedback form.
+3. Users can view feedback page:
+   - `feedback.php` provides an alternate feedback form with the same fields and star ratings.
+4. Users can submit ratings and comments:
+   - Rate Cleanliness, Staff, and Security from 1–5 stars; comments are optional. Submission posts to `submit.php`.
+5. Render/display Thank-You page:
+   - After successful submission, users are redirected to `thanks.php`.
+6. Admin Dashboard:
+   - `dashboard.php` displays total feedback, average ratings, distribution by star, and daily trends using charts.
+7. Filter and search:
+   - Dashboard filters by date range and category; search recent comments in a table view.
+8. CSV export:
+   - `export_csv.php` exports feedback data reflecting the current filter to a CSV file.
+9. Manage admins (super admin only):
+   - `admin_manage.php` lists admins, allows creating admins with optional profile info, and deleting admins.
+10. Change password:
+   - `admin_change_password.php` lets admins update their password after verifying the current one.
+11. Client-side enhancements:
+   - `static/app.js` adds tooltips, navbar shadow on scroll, a back-to-top button, gallery modal, and comment character counter.
+12. Styling and theme:
+   - `static/styles.css` provides the brand palette, layout styling, and responsive adjustments.
+
+Ensured Tests were running:
+- No automated tests are included; manual verification covers:
+  - Feedback submission and database insertion.
+  - Admin login/logout and access gating.
+  - Dashboard data fetching and chart rendering.
+  - CSV export behavior.
+  - Admin creation/deletion, and password change flows.
+
+Error Handling:
+- Invalid ratings:
+  - `submit.php` validates ratings to be integers between 1 and 5; invalid submissions return HTTP 400.
+- Unauthorized access:
+  - Protected endpoints check session `admin_id`:
+    - `dashboard.php`, `api_data.php`, `export_csv.php`, `admin_manage.php` require login; APIs return HTTP 401 if unauthorized.
+- Login failures:
+  - `admin_login.php` shows “Invalid username or password” on error.
+- Duplicate admin username:
+  - `admin_signup.php` and `admin_manage.php` reject existing usernames.
+- Prevent self-deletion:
+  - `admin_manage.php` blocks deleting the currently logged-in admin.
+- Server/DB errors:
+  - PDO exceptions return generic messages or HTTP 500, avoiding sensitive details.
+
+Notes:
+- Charts are powered by Chart.js via CDN; data is fetched from `api_data.php`.
+- All server-side scripts share a PDO connection from `db_config.php`.
+- For production, set strong DB credentials and consider disabling public admin sign-up (`ALLOW_ADMIN_SIGNUP=false`).
+- Provide your NAME and MATRIC NUMBER above; I can update the header if needed.

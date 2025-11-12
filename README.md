@@ -1,6 +1,4 @@
-# FAANFeedbackApp
-
-FAAN Passenger Feedback – Deployment Guide
+NAMA Passenger Feedback – Deployment Guide
 
 Overview
 
@@ -128,4 +126,3 @@ Quick Test (optional)
 - You can also run the built-in PHP dev server during development:
   - From the project root: `php -S localhost:8000`
   - Visit `http://localhost:8000/index.php`
-

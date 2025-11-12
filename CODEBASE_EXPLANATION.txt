@@ -1,0 +1,242 @@
+NAMA Passenger Feedback – Codebase Explanation
+
+Overview
+- This application collects passenger feedback for NAMA, stores it in MySQL, and provides an admin dashboard with analytics and CSV export.
+- Tech stack: PHP 8+, MySQL (PDO), Bootstrap 5, Chart.js, vanilla JavaScript, custom CSS.
+
+Project Structure and File Purposes
+- index.php: Public landing page and feedback form (stars + contact fields).
+- feedback.php: Alternate feedback form page with similar fields and star ratings.
+- submit.php: POST handler to validate and insert feedback rows into the database.
+- thanks.php: Confirmation page shown after successful feedback submission.
+- dashboard.php: Protected admin dashboard showing metrics, charts, comments, and filters.
+- api_data.php: Protected JSON API used by the dashboard to fetch filtered data and aggregates.
+- export_csv.php: Protected CSV export endpoint for filtered feedback data.
+- admin_login.php: Admin login page; sets session on success and redirects to dashboard.
+- admin_signup.php: Admin registration page (allowed via `config.php`); first admin becomes `super`.
+- admin_manage.php: Super admin-only page to list, create, and delete admins.
+- admin_change_password.php: Admin-only page to update the current admin’s password.
+- admin_logout.php: Ends the admin session and redirects to login.
+- db_config.php: Centralized PDO connection to MySQL with exception mode enabled.
+- config.php: Application flags (e.g., allow admin signup).
+- manual_setup.sql: SQL schema to initialize database tables and columns.
+- static/styles.css: Custom brand/theme styles for public pages and dashboard.
+- static/app.js: Client-side UX enhancements (tooltips, back-to-top, smooth scroll, text counter).
+- static/dashboard.js: Dashboard charts, filters, data fetching, table rendering.
+- static/* images: Static assets used in branding and hero/gallery sections.
+
+Data Model (manual_setup.sql)
+- Database: `feedback_app` (UTF8MB4).
+- Table `feedback`: id, rating_cleanliness, rating_staff, rating_security, comment, timestamp, name, email, phone.
+- Table `admins`: id, username (unique), password_hash, created_at, first_name, last_name, email, phone, picture_url, role.
+
+Page-by-Page Line-by-Line Explanations (PHP pages)
+
+index.php
+Purpose: Public landing page and feedback form; collects ratings and contact info, then posts to `submit.php`. Includes Bootstrap and `static/app.js` for UI.
+1: `<?php ?>` – Empty PHP tag; no server-side logic here.
+2: `<!DOCTYPE html>` – HTML5 document type.
+3: `<html lang="en">` – English language document.
+4–10: `<head>` – Meta tags, title, Bootstrap CSS, icons, and site styles.
+11: `<body>` – Begin page body.
+12–24: Navbar container with brand and single nav link “Give Feedback” to `index.php`.
+25–33: Inline `<style>` tuning star rating presentation (RTL, hidden inputs, hover/checked colors).
+35–38: Layout container/row/column wrapping a card for the form.
+39–45: Card header: icon + “Share Your Experience” and helper text.
+46: `<form action="submit.php" method="POST" class="compact-form">` – Begins feedback form to POST.
+47–62: Three floating inputs for `name`, `email`, `phone` with labels and validation.
+64–79: Cleanliness rating block – five radios (1–5), RTL labels to render stars; required at 1.
+80–95: Staff rating block – same pattern as cleanliness.
+96–111: Security rating block – same pattern as cleanliness.
+113–118: Comment `<textarea>` with floating label; optional.
+120–122: Submit button (`btn btn-primary w-100`) – full width submission.
+124–128: Footer with logo and dynamic copyright year.
+130–131: Bootstrap JS bundle and site `static/app.js` scripts.
+
+feedback.php
+Purpose: Alternate feedback form page with the same fields and star ratings; posts to `submit.php`. Minimal navbar; includes site styles and `static/app.js`.
+1: `<?php ?>` – Empty PHP tag.
+2–10: `<head>` – Meta tags, title, Bootstrap CSS, site styles, inline star styles.
+11–23: Navbar with brand and active “Give Feedback” link to `feedback.php`.
+25–27: Container/row/column wrapping the card.
+28–32: Card header: title and helper text.
+33: `<form action="submit.php" method="POST">` – Begins feedback form to POST.
+34–49: Floating inputs for `name`, `email`, `phone` with validation.
+51–65: Cleanliness rating – radios 1–5, RTL labels as stars.
+66–80: Staff rating – radios 1–5.
+81–95: Security rating – radios 1–5.
+97–102: Optional comment `<textarea>` with floating label.
+104–107: Action buttons – back to home and submit.
+109–115: Footer with logo and dynamic copyright.
+117–119: Bootstrap JS bundle and `static/app.js`.
+
+submit.php
+Purpose: Server-side POST handler that validates ratings and inserts feedback into MySQL via PDO, then redirects to the thank-you page.
+1–4: Guard: if request method is not POST, redirect to `index.php`.
+6: Include `db_config.php` to get `$pdo`.
+8–14: Read and trim POST fields: name, email, phone, ratings, comment.
+16–19: Validate that ratings are integers in [1..5]; return 400 on failure.
+21–32: Prepare and bind `INSERT INTO feedback` with nullable name/email/phone/comment; always store ratings.
+33–35: On success, redirect to `thanks.php` and exit.
+36–39: On database error, respond 500 and show a generic message.
+
+thanks.php
+Purpose: Simple confirmation page shown after successful feedback submission, offering a link to submit another feedback.
+1–2: Empty PHP and start HTML.
+3–10: Head – meta tags, title, Bootstrap CSS.
+11–23: Centered card showing “Thank you for your feedback!” and a button to return to `index.php`.
+24–27: Bootstrap JS and `static/app.js`.
+
+dashboard.php
+Purpose: Admin-only dashboard rendering metrics, charts, and comments with filters; depends on `api_data.php` and `static/dashboard.js`.
+1–5: Start session and enforce login (`admin_id` in session); otherwise redirect to `admin_login.php`.
+6–14: Head – meta tags, title, Bootstrap CSS, Chart.js, site styles.
+16–32: Sidebar with brand/logo and current admin name.
+33–41: Sidebar nav links: Dashboard, Give Feedback, Home, Manage Admins (super only), Change Password, Logout.
+42–52: Filters card: date range inputs, category select, Apply Filters button, Export CSV link.
+53–72: Metric cards: total feedback and average ratings (cleanliness, staff, security).
+74–89: Ratings Distribution chart card with `<canvas id="ratingsChart">`.
+90–111: Recent Comments table with search input and `<tbody>` target.
+113–125: Daily Feedback Trend chart card with `<canvas id="dailyTrendChart">`.
+127–131: Include `static/dashboard.js`, Bootstrap bundle, and `static/app.js`.
+
+export_csv.php
+Purpose: Admin-only endpoint to export filtered feedback data as CSV based on optional date range.
+1–7: Start session and enforce login; return 401 text if unauthorized.
+9: Include `db_config.php` to get `$pdo`.
+11–12: Read optional `from` and `to` query params.
+14–20: Build SQL with optional date WHERE clauses and params; order by timestamp desc.
+22–25: Prepare, bind, execute, and fetch rows.
+27–28: Set CSV headers (content type and disposition).
+30–34: Stream CSV to `php://output` with header row and each feedback row.
+35: Exit.
+
+api_data.php
+Purpose: Admin-only JSON API providing feedback aggregates, distributions, daily series, and recent comments for the dashboard.
+1–7: Start session and enforce login; return 401 JSON object if unauthorized.
+9: Include `db_config.php` and set JSON content type.
+10–12: Read optional `from` and `to` query params.
+14–22: Build filtered SELECT query with optional WHERE clauses; order by timestamp desc.
+24–27: Prepare, bind, execute, fetch all rows.
+29–49: Aggregate totals, sums, distributions per category, recent comments list, and daily counts/averages.
+51–59: Compute averages (rounded), limit recent comments to 50.
+61–66: Sort daily labels, build series arrays for counts and average overall.
+68–77: Echo JSON response containing filters, totals, averages, distributions, daily series, and comments.
+78–82: On PDO error, return 500 JSON error.
+
+admin_login.php
+Purpose: Authenticates admins; on success stores session (`admin_id`, `admin_username`, `admin_role`) and redirects to the dashboard.
+1–3: Start session; include database config.
+5–21: If POST, validate inputs; fetch admin by username; verify password; on success, set session (id/username/role) and redirect to dashboard; on failure, collect error messages.
+22: `$registered` flag (query parameter) to show success after signup.
+24–33: Head – meta tags, title, CSS.
+34–66: Login card with brand, conditional success/error alerts, username/password fields, back to home link, signup link, login button.
+67–72: Bootstrap bundle and `static/app.js`.
+
+admin_signup.php
+Purpose: Registers new admins when enabled in `config.php`; first account becomes `super`, others default to `admin`.
+1–3: Start session; include `config.php` and `db_config.php`.
+5–8: Guard: if `ALLOW_ADMIN_SIGNUP` is false, redirect to login with `signup_disabled=1`.
+10–34: If POST, read fields; require username/password; check for username conflict; hash password; derive role (`super` if first admin, else `admin`); insert; redirect to login with `registered=1`; set error messages on failure.
+36–45: Head – meta tags, title, CSS.
+46–111: Signup form with username, password, optional profile fields, and picture URL; buttons to go back to login and submit.
+112–117: Bootstrap bundle and `static/app.js`.
+
+admin_manage.php
+Purpose: Super admin-only interface to list, create, and delete admin accounts with role selection and basic profile fields.
+1–3: Start session; include `db_config.php`.
+5–12: Guard: require logged-in admin.
+14–24: Query current admin’s role; if not `super`, return 403 with message and exit.
+26–31: Initialize `$errors` and `$success`.
+33–72: If POST and action is `create`: read inputs; validate; check uniqueness; hash password; insert admin with optional profile fields and chosen role; set success or add error messages.
+73–96: If POST and action is `delete`: validate id, prevent deleting own account, delete target admin; set success or error.
+98–102: Load admins list ordered by `created_at` desc into `$admins`.
+104–117: Head – meta tags, title, CSS.
+118–137: Navbar (admin tools) with links to Dashboard, Change Password, user indicator, Logout.
+139–179: Admins table: shows profile (picture, name), email, phone, role badge, created timestamp, and a delete button per row.
+180–217: Create Admin form with fields and role select; submit posts `action=create`.
+
+admin_change_password.php
+Purpose: Allows a logged-in admin to update their password after verifying the current one, using secure hashing.
+1–3: Start session; include `db_config.php`.
+5–9: Guard: require logged-in admin.
+11–12: Initialize `$errors` and `$success`.
+14–33: If POST: read current/new/confirm; validate; pull stored hash; verify current; hash new; update `admins` record; set success; on PDO error, add error.
+35–45: Head – meta tags, title, CSS.
+46–61: Navbar (admin tools) with Dashboard, Manage Admins, user indicator, Logout.
+63–92: Change password form: current/new/confirm; POST back; shows success/errors.
+94–97: Bootstrap bundle and `static/app.js`.
+
+admin_logout.php
+Purpose: Safely ends the admin session, clears cookies if used, and redirects to the login page.
+1: Start session.
+2–8: Clear session array and cookie (if set) using current cookie params.
+9–10: Destroy session.
+11–12: Redirect to `admin_login.php` and exit.
+
+Configs and Utilities
+
+db_config.php
+Purpose: Central PDO setup for connecting to the MySQL `feedback_app` database and enabling exception error mode.
+1–4: Define connection parameters: host, dbname, username, password.
+6–10: Build DSN and instantiate PDO; set error mode to exceptions.
+11–12: On error, terminate with a message.
+
+config.php
+Purpose: Central feature flag(s); currently controls whether admin signup is permitted.
+1–2: Define `ALLOW_ADMIN_SIGNUP` boolean flag; when `true`, signup page is accessible.
+
+manual_setup.sql
+Purpose: Bootstraps the database schema and adds optional columns; safe to run multiple times with IF NOT EXISTS guards.
+1–2: Create/select database `feedback_app`.
+4–10: Create `feedback` table with ratings, optional `comment`, and `timestamp` defaulting to current time.
+12–16: Create `admins` table with a unique `username`, `password_hash`, and `created_at`.
+18–24: Add optional profile columns and `role` (default `admin`) to `admins`.
+26–31: Add optional `name`, `email`, `phone` fields to `feedback`.
+
+Client-Side Files (high-level explanations)
+
+static/app.js
+- Initializes Bootstrap tooltips for elements with `data-bs-toggle="tooltip"`.
+- Adds a scroll-based shadow to the navbar when scrolled beyond 20px.
+- Creates a floating “back to top” button that appears after scrolling 300px; smooth scrolls to top.
+- Enables smooth scrolling for in-page anchor links.
+- Implements a modal image viewer for `static/gallery*.jpg` images.
+- Adds a 500-character counter to the `#comment` textarea when present.
+
+static/dashboard.js
+- Reads brand CSS variables for chart colors.
+- Captures DOM references for metric counters, comments table, filters, and export link.
+- Renders a distribution bar chart (`ratingsChart`) and a daily trend line chart (`dailyTrendChart`) using Chart.js.
+- Sets default date range to the last 30 days.
+- Builds query string from filters; updates export link to `export_csv.php` accordingly.
+- Fetches `api_data.php`, updates counts/averages, charts, and comments table; provides client-side search filter.
+- Refreshes data on filter button click and category change; initializes once on load.
+
+static/styles.css
+- Defines brand palette (`--brand-primary`, `--brand-dark`, `--brand-accent`, `--brand-muted`).
+- Styles headings, feature sections, process steps, testimonials, and CTA gradients.
+- Sets global body font and background gradient.
+- Styles navbar brand, gradient text, hero section, glass card effect, typography weights.
+- Footer spacing and table vertical alignment; filter group input sizing.
+- Overrides Bootstrap dark navbar, primary and outline-primary buttons and link colors.
+- Card headers, table stripe colors, dashboard grid layout, sidebar theming, and content background.
+- Chart card limits, brand logo sizing with responsive adjustments.
+- Media queries adjust paddings, font sizes, chart sizes, and filter layout on small screens.
+
+Images (static/*.png, *.jpg)
+- Branding logo files and hero/gallery images used by the UI; no executable code.
+
+How Files Work Together
+- Public pages (`index.php`, `feedback.php`) POST to `submit.php` which inserts into `feedback`.
+- After insertion, users are redirected to `thanks.php`.
+- Admin pages require session `admin_id`; `admin_login.php` sets it; `admin_logout.php` clears it.
+- `dashboard.php` loads data via `api_data.php` and renders charts via `static/dashboard.js` and Chart.js.
+- CSV export is handled by `export_csv.php` which uses the same filter logic as `api_data.php`.
+- `db_config.php` provides the `$pdo` connection for all server-side scripts; `manual_setup.sql` bootstraps schema.
+
+Notes and Assumptions
+- All scripts expect a working MySQL server and a database created per `manual_setup.sql`.
+- Passwords use `password_hash` and `password_verify`; roles gate admin features.
+- First admin created becomes `super`; only `super` can access `admin_manage.php`.
+- Client-side scripts assume Bootstrap 5 and Chart.js are available via CDN.

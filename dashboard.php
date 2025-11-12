@@ -10,7 +10,7 @@ if (!isset($_SESSION['admin_id'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Admin Dashboard - FAAN Passenger Feedback</title>
+    <title>Admin Dashboard - NAMA Passenger Feedback</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <link href="static/styles.css" rel="stylesheet">
@@ -19,8 +19,7 @@ if (!isset($_SESSION['admin_id'])) {
    <div class="dashboard-layout">
      <aside class="sidebar">
        <div class="d-flex align-items-center mb-3">
-         <img src="static/faan-logo.png" alt="FAAN" class="brand-logo me-2" onerror="this.style.display='none'">
-         <span> <img src="/static/Faan.logo_.png" alt="" width="100px"></span>
+         <img src="static/nama-logo.png" alt="NAMA" class="brand-logo me-2" onerror="this.style.display='none'">
          <span class="ms-2">Feedback Admin</span>
        </div>
        <div class="small mb-3">Welcome, <?= htmlspecialchars($_SESSION['admin_username'] ?? 'Admin') ?></div>

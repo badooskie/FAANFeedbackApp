@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Give Feedback – FAAN Passenger Feedback</title>
+  <title>Give Feedback – NAMA Passenger Feedback</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="static/styles.css" rel="stylesheet">
   <style>
@@ -21,8 +21,9 @@
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
       <a class="navbar-brand d-flex align-items-center" href="index.php">
-        <img src="static/faan-logo.png" alt="FAAN" class="brand-logo me-2" onerror="this.style.display='none'">
-        <span class="brand-gradient">FAAN</span> Passenger Feedback
+        <img src="static/nama-logo.png" alt="NAMA" class="brand-logo me-2" onerror="this.style.display='none'">
+        <img src="static/coat-of-arms.png" alt="Nigerian Coat of Arms" class="brand-logo me-2" onerror="this.style.display='none'">
+        <span class="brand-gradient">NAMA</span> Passenger Feedback
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -41,7 +42,7 @@
         <div class="card shadow-sm">
           <div class="card-body p-4">
             <h3 class="h4 mb-2">Share Your Experience</h3>
-            <p class="text-muted mb-3">Your feedback helps FAAN improve services across Nigeria.</p>
+            <p class="text-muted mb-3">Your feedback helps NAMA improve services across Nigeria.</p>
             <form action="submit.php" method="POST">
               <div class="row g-2 mb-3">
                 <div class="col-md-4">
@@ -115,8 +116,8 @@
   <footer class="footer border-top bg-white">
     <div class="container d-flex justify-content-between align-items-center py-2">
       <div class="d-flex align-items-center">
-        <img src="static/faan-logo.png" alt="FAAN" class="brand-logo me-2" onerror="this.style.display='none'">
-        <small>© <?php echo date('Y'); ?> Federal Airports Authority of Nigeria</small>
+        <img src="static/nama-logo.png" alt="NAMA" class="brand-logo me-2" onerror="this.style.display='none'">
+        <small>© <?php echo date('Y'); ?> Nigerian Airspace Management Agency</small>
       </div>
     </div>
   </footer>

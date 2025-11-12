@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Admin Sign Up – FAAN Feedback</title>
+  <title>Admin Sign Up – NAMA Feedback</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="static/styles.css" rel="stylesheet">
 </head>
@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div class="col-md-6">
         <div class="card shadow-sm">
           <div class="card-body p-4">
-            <h3 class="mb-3"><span> <img src="/static/Faan.logo_.png" alt="" width="100px"></span> Admin Sign Up</h3>
+            <h3 class="mb-3 d-flex align-items-center"><img src="static/nama-logo.png" alt="NAMA" class="brand-logo me-2" onerror="this.style.display='none'"> Admin Sign Up</h3>
             <?php if ($errors): ?>
               <div class="alert alert-danger"><?= implode('<br>', $errors) ?></div>
             <?php endif; ?>

@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Change Password – FAAN Feedback</title>
+  <title>Change Password – NAMA Feedback</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="static/styles.css" rel="stylesheet">
 </head>
@@ -50,8 +50,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
       <a class="navbar-brand d-flex align-items-center" href="index.php">
-        <img src="static/faan-logo.png" alt="FAAN" class="brand-logo me-2" onerror="this.style.display='none'">
-        <span class="brand-gradient">FAAN</span> Admin Tools
+        <img src="static/nama-logo.png" alt="NAMA" class="brand-logo me-2" onerror="this.style.display='none'">
+        <img src="static/coat-of-arms.png" alt="Nigerian Coat of Arms" class="brand-logo me-2" onerror="this.style.display='none'">
+        <span class="brand-gradient">NAMA</span> Admin Tools
       </a>
       <div class="d-flex gap-2 align-items-center">
         <a class="btn btn-outline-light" href="dashboard.php">Dashboard</a>

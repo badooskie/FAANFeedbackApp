@@ -34,7 +34,7 @@ $registered = isset($_GET['registered']);
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Admin Login – FAAN Feedback</title>
+  <title>Admin Login – NAMA Feedback</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="static/styles.css" rel="stylesheet">
 </head>
@@ -45,8 +45,7 @@ $registered = isset($_GET['registered']);
         <div class="card shadow-sm">
           <div class="card-body p-4">
             <h3 class="mb-3 d-flex align-items-center">
-              <img src="static/faan-logo.png" alt="FAAN" class="brand-logo me-2" onerror="this.style.display='none'">
-              <span> <img src="/static/Faan.logo_.png" alt="" width="100px"></span> Admin Login
+              <img src="static/nama-logo.png" alt="NAMA" class="brand-logo me-2" onerror="this.style.display='none'"> Admin Login
             </h3>
             <?php if ($registered): ?>
               <div class="alert alert-success">Registration successful. Please log in.</div>
